@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#111917">
+  <title>Próxima — Organizador de candidaturas</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='10' fill='%231d6852'/%3E%3Cpath d='M12 28V12h9a6 6 0 0 1 0 12h-9' fill='none' stroke='white' stroke-width='3'/%3E%3C/svg%3E">
+  <script src="/theme.js"></script>
+  <link rel="stylesheet" href="/styles.css">
+  <script type="module" src="/app.mjs"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="Próxima, início"><span class="brand-mark" aria-hidden="true">p.</span>próxima<span class="brand-dot">/</span></a>
+    <div class="topbar-actions"><span class="local-label"><span aria-hidden="true"></span> Seu espaço local</span><button id="theme-toggle" class="theme-toggle" type="button" aria-label="Ativar modo escuro" aria-pressed="false" title="Ativar modo escuro"><span aria-hidden="true">☾</span></button></div>
+  </header>
+  <main>
+    <section class="intro" aria-labelledby="page-title">
+      <div><p class="eyebrow">ORGANIZADOR DE CANDIDATURAS</p><h1 id="page-title">Suas próximas oportunidades</h1><p class="subtitle">Cada candidatura, um passo. Acompanhe todos eles por aqui.</p></div>
+      <button id="new" class="primary" type="button"><span aria-hidden="true">＋</span> Nova candidatura</button>
+    </section>
+    <section class="summary" aria-label="Resumo das candidaturas">
+      <div class="summary-total"><span>Total de candidaturas</span><strong id="total">—</strong></div>
+      <div><span><i class="dot enviada"></i>Enviadas</span><strong id="count-ENVIADA">—</strong></div>
+      <div><span><i class="dot entrevista"></i>Entrevistas</span><strong id="count-ENTREVISTA">—</strong></div>
+      <div><span><i class="dot proposta"></i>Propostas</span><strong id="count-PROPOSTA">—</strong></div>
+      <div><span><i class="dot encerrada"></i>Encerradas</span><strong id="count-ENCERRADA">—</strong></div>
+    </section>
+    <section class="workspace" aria-labelledby="list-title">
+      <div class="section-heading"><h2 id="list-title">Minhas candidaturas <span id="result-count"></span></h2><span class="sort-label">Mais recentes primeiro</span></div>
+      <div class="filters">
+        <div class="search-wrap"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="Buscar empresa ou cargo" aria-label="Buscar candidaturas" maxlength="120"></div>
+        <select id="filter" aria-label="Filtrar por etapa"><option value="">Todas as etapas</option><option value="ENVIADA">Enviada</option><option value="ENTREVISTA">Entrevista</option><option value="PROPOSTA">Proposta</option><option value="ENCERRADA">Encerrada</option></select>
+        <button id="clear" class="text-button" type="button" hidden>Limpar filtros</button>
+      </div>
+      <div id="load-error" class="error-banner" role="alert" hidden><span id="load-error-text"></span><button id="retry" type="button">Tentar novamente</button></div>
+      <div id="loading" class="empty" role="status">Carregando suas candidaturas…</div>
+      <div id="list" aria-live="polite" aria-busy="true"></div>
+      <div id="empty" class="empty" hidden><span class="empty-symbol" aria-hidden="true">↗</span><h3 id="empty-title">Seu próximo passo começa aqui</h3><p id="empty-text">Cadastre uma vaga para acompanhar sua primeira candidatura.</p><button id="empty-new" type="button" class="secondary">Cadastrar primeira candidatura</button></div>
+    </section>
+    <footer><span>Feito para organizar o caminho, não a ansiedade.</span><span>Dados salvos neste computador.</span></footer>
+  </main>
+  <dialog id="editor" aria-labelledby="editor-title">
+    <form id="form">
+      <div class="dialog-heading"><div><p class="eyebrow">UM NOVO PASSO</p><h2 id="editor-title">Nova candidatura</h2></div><button id="close-editor" class="close" type="button" aria-label="Fechar formulário">×</button></div>
+      <p class="form-intro">Guarde os detalhes para continuar de onde parou.</p>
+      <div class="field"><label for="empresa">Empresa</label><input id="empresa" name="empresa" required maxlength="150" placeholder="Ex.: nome da empresa" autocomplete="organization"></div>
+      <div class="field"><label for="cargo">Cargo</label><input id="cargo" name="cargo" required maxlength="150" placeholder="Ex.: Desenvolvedor Java Júnior"></div>
+      <div class="form-row"><div class="field"><label for="data">Data da candidatura</label><input id="data" name="dataCandidatura" type="date" required></div><div class="field"><label for="etapa">Etapa</label><select id="etapa" name="etapa"><option value="ENVIADA">Enviada</option><option value="ENTREVISTA">Entrevista</option><option value="PROPOSTA">Proposta</option><option value="ENCERRADA">Encerrada</option></select></div></div>
+      <div class="field"><label for="link">Link da vaga <span>opcional</span></label><input id="link" name="link" type="url" maxlength="1000" placeholder="https://…"></div>
+      <div class="field"><label for="observacoes">Observações <span>opcional</span></label><textarea id="observacoes" name="observacoes" rows="3" maxlength="5000" placeholder="Contato do recrutador, próximas etapas, pontos importantes…"></textarea></div>
+      <p id="form-error" class="form-error" role="alert" hidden></p>
+      <div class="dialog-actions"><button id="cancel-editor" type="button" class="secondary">Cancelar</button><button id="save" class="primary" type="submit">Salvar candidatura</button></div>
+    </form>
+  </dialog>
+  <dialog id="delete-dialog" aria-labelledby="delete-title">
+    <h2 id="delete-title">Excluir candidatura?</h2><p id="delete-description"></p><p class="muted">Essa ação não pode ser desfeita.</p><p id="delete-error" class="form-error" role="alert" hidden></p>
+    <div class="dialog-actions"><button id="cancel-delete" type="button" class="secondary">Cancelar</button><button id="confirm-delete" type="button" class="danger">Excluir candidatura</button></div>
+  </dialog>
+  <div id="toast" role="status" hidden></div>
+</body>
+</html>
